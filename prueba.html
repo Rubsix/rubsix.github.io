@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario para ti, mi amorcito ❤️</title> <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kalam', cursive;
+            background: linear-gradient(135deg, #ffeef8 0%, #f0e6ff 50%, #e6f3ff 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(255, 182, 193, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(173, 216, 230, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(221, 160, 221, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 90%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(200, 150, 200, 0.15);
+            backdrop-filter: blur(15px);
+            text-align: center;
+            position: relative;
+            border: 2px solid rgba(255, 192, 203, 0.2);
+            margin-bottom: 160px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-top: 80px;
+        }
+
+        .quiz-container {
+            display: block;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        .quiz-container.hide {
+            display: none;
+        }
+
+        h1 {
+            color: #8b5a8c;
+            margin-bottom: 20px;
+            font-size: 2.8em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(139, 90, 140, 0.1);
+        }
+
+        .introduction-message {
+            color: #6b4c6d;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            background: rgba(255, 240, 245, 0.6);
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 182, 193, 0.3);
+            font-weight: 400;
+            animation: slideIn 0.8s ease-out 0.2s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .question {
+            margin-bottom: 35px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideIn 0.6s ease-out forwards;
+            background: rgba(255, 240, 245, 0.6);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 182, 193, 0.3);
+        }
+
+        .question img { /* Estilo para las imágenes de las preguntas */
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin-top: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            max-height: 250px; /* Limitar altura para que no sean demasiado grandes */
+            object-fit: cover; /* Recortar si es necesario para mantener el aspecto */
+        }
+
+        .question:nth-child(2) { animation-delay: 0.1s; }
+        .question:nth-child(3) { animation-delay: 0.2s; }
+        .question:nth-child(4) { animation-delay: 0.3s; }
+        .question:nth-child(5) { animation-delay: 0.4s; }
+        .question:nth-child(6) { animation-delay: 0.5s; }
+        .question:nth-child(7) { animation-delay: 0.6s; }
+        .question:nth-child(8) { animation-delay: 0.7s; }
+        .question:nth-child(9) { animation-delay: 0.8s; }
+        .question:nth-child(10) { animation-delay: 0.9s; }
+        .question:nth-child(11) { animation-delay: 1.0s; }
+        .question:nth-child(12) { animation-delay: 1.1s; }
+
+
+        .question h3 {
+            color: #6b4c6d;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: linear-gradient(45deg, #ffd1dc 0%, #e6e6fa 100%);
+            border: 2px solid rgba(255, 182, 193, 0.3);
+            padding: 15px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            color: #6b4c6d;
+            font-weight: 400;
+            font-family: 'Kalam', cursive;
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.3);
+            background: linear-gradient(45deg, #ffb6c1 0%, #dda0dd 100%);
+        }
+
+        .option.selected {
+            background: linear-gradient(45deg, #dda0dd 0%, #b19cd9 100%);
+            color: white;
+            transform: scale(1.02);
+            border-color: #b19cd9;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 182, 193, 0.3);
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-family: 'Kalam', cursive;
+            color: #6b4c6d;
+            background: rgba(255, 255, 255, 0.8);
+            resize: vertical;
+            min-height: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #dda0dd;
+            box-shadow: 0 0 15px rgba(221, 160, 221, 0.2);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .text-input::placeholder {
+            color: #b19cd9;
+            font-style: italic;
+        }
+
+        .true-false {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .tf-option {
+            background: linear-gradient(45deg, #ffd1dc 0%, #e6e6fa 100%);
+            border: 2px solid rgba(255, 182, 193, 0.3);
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+            color: #6b4c6d;
+            font-weight: 500;
+            font-family: 'Kalam', cursive;
+            min-width: 120px;
+        }
+
+        .tf-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.3);
+            background: linear-gradient(45deg, #ffb6c1 0%, #dda0dd 100%);
+        }
+
+        .tf-option.selected {
+            background: linear-gradient(45deg, #dda0dd 0%, #b19cd9 100%);
+            color: white;
+            transform: scale(1.05);
+            border-color: #b19cd9;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #f8bbd9, #e6a8d5);
+            color: #6b4c6d;
+            border: 2px solid rgba(255, 182, 193, 0.4);
+            padding: 18px 45px;
+            border-radius: 30px;
+            font-size: 1.3em;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-family: 'Kalam', cursive;
+            opacity: 0.6;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(248, 187, 217, 0.4);
+            background: linear-gradient(45deg, #f5a3d0, #dda0dd);
+        }
+
+        .submit-btn.ready {
+            opacity: 1;
+            transform: scale(1.05);
+            animation: gentle-pulse 2s infinite;
+        }
+
+        .result-container {
+            display: none;
+            text-align: center;
+            animation: fadeInScale 1s ease-out;
+        }
+
+        .result-container.show {
+            display: block;
+        }
+
+        /* Contenedor de la flor y sus variaciones */
+        .flower {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 10px;
+            position: relative;
+            animation: bloom 2s ease-out forwards, gentle-sway 3s ease-in-out infinite 2s;
+            transform-origin: 50% 100%;
+        }
+
+        .petal {
+            position: absolute;
+            background: linear-gradient(145deg, #ffd1dc, #ffb6c1); /* rosa preterminado */
+            border-radius: 50px 50px 50px 10px;
+            transform-origin: 50% 90%;
+            opacity: 0;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.3);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -90%);
+            animation: petal-appear 0.8s ease-out forwards;
+        }
+        /* petalo por defecto 0-2 (basic flower) */
+        .flower.level-0 .petal { width: 50px; height: 100px; }
+        .flower.level-0 .petal:nth-child(1) { animation-delay: 0.1s; transform: translate(-50%, -90%) rotate(0deg) translateY(-20px); }
+        .flower.level-0 .petal:nth-child(2) { animation-delay: 0.2s; transform: translate(-50%, -90%) rotate(72deg) translateY(-20px); }
+        .flower.level-0 .petal:nth-child(3) { animation-delay: 0.3s; transform: translate(-50%, -90%) rotate(144deg) translateY(-20px); }
+        .flower.level-0 .petal:nth-child(4) { animation-delay: 0.4s; transform: translate(-50%, -90%) rotate(216deg) translateY(-20px); }
+        .flower.level-0 .petal:nth-child(5) { animation-delay: 0.5s; transform: translate(-50%, -90%) rotate(288deg) translateY(-20px); }
+        .flower.level-0 .petal:nth-child(n+6) { display: none; }
+
+
+        /* Level 1: 3-4 correctas */
+        .flower.level-1 .petal { background: linear-gradient(145deg, #ffb6c1, #e6a8d5); width: 55px; height: 105px; }
+        .flower.level-1 .petal:nth-child(1) { animation-delay: 0.1s; transform: translate(-50%, -90%) rotate(0deg) translateY(-22px); }
+        .flower.level-1 .petal:nth-child(2) { animation-delay: 0.2s; transform: translate(-50%, -90%) rotate(60deg) translateY(-22px); }
+        .flower.level-1 .petal:nth-child(3) { animation-delay: 0.3s; transform: translate(-50%, -90%) rotate(120deg) translateY(-22px); }
+        .flower.level-1 .petal:nth-child(4) { animation-delay: 0.4s; transform: translate(-50%, -90%) rotate(180deg) translateY(-22px); }
+        .flower.level-1 .petal:nth-child(5) { animation-delay: 0.5s; transform: translate(-50%, -90%) rotate(240deg) translateY(-22px); }
+        .flower.level-1 .petal:nth-child(6) { animation-delay: 0.6s; transform: translate(-50%, -90%) rotate(300deg) translateY(-22px); }
+        .flower.level-1 .petal:nth-child(n+7) { display: none; }
+
+
+        /* Level 2: 5-6 correctas */
+        .flower.level-2 .petal { background: linear-gradient(145deg, #ff99ab, #d87093); width: 60px; height: 110px; }
+        .flower.level-2 .petal:nth-child(1) { animation-delay: 0.1s; transform: translate(-50%, -90%) rotate(0deg) translateY(-25px); }
+        .flower.level-2 .petal:nth-child(2) { animation-delay: 0.2s; transform: translate(-50%, -90%) rotate(40deg) translateY(-25px); }
+        .flower.level-2 .petal:nth-child(3) { animation-delay: 0.3s; transform: translate(-50%, -90%) rotate(80deg) translateY(-25px); }
+        .flower.level-2 .petal:nth-child(4) { animation-delay: 0.4s; transform: translate(-50%, -90%) rotate(120deg) translateY(-25px); }
+        .flower.level-2 .petal:nth-child(5) { animation-delay: 0.5s; transform: translate(-50%, -90%) rotate(160deg) translateY(-25px); }
+        .flower.level-2 .petal:nth-child(6) { animation-delay: 0.6s; transform: translate(-50%, -90%) rotate(200deg) translateY(-25px); }
+        .flower.level-2 .petal:nth-child(7) { animation-delay: 0.7s; transform: translate(-50%, -90%) rotate(240deg) translateY(-25px); }
+        .flower.level-2 .petal:nth-child(8) { animation-delay: 0.8s; transform: translate(-50%, -90%) rotate(280deg) translateY(-25px); }
+        .flower.level-2 .petal:nth-child(9) { animation-delay: 0.9s; transform: translate(-50%, -90%) rotate(320deg) translateY(-25px); }
+        .flower.level-2 .petal:nth-child(n+10) { display: none; }
+
+
+        /* Level 3: 7-8 correctas*/
+        .flower.level-3 .petal { background: linear-gradient(145deg, #ff6381, #c71585); width: 65px; height: 115px; }
+        .flower.level-3 .petal:nth-child(1) { animation-delay: 0.1s; transform: translate(-50%, -90%) rotate(0deg) translateY(-28px); }
+        .flower.level-3 .petal:nth-child(2) { animation-delay: 0.2s; transform: translate(-50%, -90%) rotate(36deg) translateY(-28px); }
+        .flower.level-3 .petal:nth-child(3) { animation-delay: 0.3s; transform: translate(-50%, -90%) rotate(72deg) translateY(-28px); }
+        .flower.level-3 .petal:nth-child(4) { animation-delay: 0.4s; transform: translate(-50%, -90%) rotate(108deg) translateY(-28px); }
+        .flower.level-3 .petal:nth-child(5) { animation-delay: 0.5s; transform: translate(-50%, -90%) rotate(144deg) translateY(-28px); }
+        .flower.level-3 .petal:nth-child(6) { animation-delay: 0.6s; transform: translate(-50%, -90%) rotate(180deg) translateY(-28px); }
+        .flower.level-3 .petal:nth-child(7) { animation-delay: 0.7s; transform: translate(-50%, -90%) rotate(216deg) translateY(-28px); }
+        .flower.level-3 .petal:nth-child(8) { animation-delay: 0.8s; transform: translate(-50%, -90%) rotate(252deg) translateY(-28px); }
+        .flower.level-3 .petal:nth-child(9) { animation-delay: 0.9s; transform: translate(-50%, -90%) rotate(288deg) translateY(-28px); }
+        .flower.level-3 .petal:nth-child(10) { animation-delay: 1.0s; transform: translate(-50%, -90%) rotate(324deg) translateY(-28px); }
+        .flower.level-3 .petal:nth-child(n+11) { display: none; }
+
+
+        /* Level 4: 9-10 correctas */
+        .flower.level-4 .petal { background: linear-gradient(145deg, #ff1493, #8b008b); width: 70px; height: 120px; }
+        .flower.level-4 .petal:nth-child(1) { animation-delay: 0.1s; transform: translate(-50%, -90%) rotate(0deg) translateY(-30px); }
+        .flower.level-4 .petal:nth-child(2) { animation-delay: 0.2s; transform: translate(-50%, -90%) rotate(30deg) translateY(-30px); }
+        .flower.level-4 .petal:nth-child(3) { animation-delay: 0.3s; transform: translate(-50%, -90%) rotate(60deg) translateY(-30px); }
+        .flower.level-4 .petal:nth-child(4) { animation-delay: 0.4s; transform: translate(-50%, -90%) rotate(90deg) translateY(-30px); }
+        .flower.level-4 .petal:nth-child(5) { animation-delay: 0.5s; transform: translate(-50%, -90%) rotate(120deg) translateY(-30px); }
+        .flower.level-4 .petal:nth-child(6) { animation-delay: 0.6s; transform: translate(-50%, -90%) rotate(150deg) translateY(-30px); }
+        .flower.level-4 .petal:nth-child(7) { animation-delay: 0.7s; transform: translate(-50%, -90%) rotate(180deg) translateY(-30px); }
+        .flower.level-4 .petal:nth-child(8) { animation-delay: 0.8s; transform: translate(-50%, -90%) rotate(210deg) translateY(-30px); }
+        .flower.level-4 .petal:nth-child(9) { animation-delay: 0.9s; transform: translate(-50%, -90%) rotate(240deg) translateY(-30px); }
+        .flower.level-4 .petal:nth-child(10) { animation-delay: 1.0s; transform: translate(-50%, -90%) rotate(270deg) translateY(-30px); }
+        .flower.level-4 .petal:nth-child(11) { animation-delay: 1.1s; transform: translate(-50%, -90%) rotate(300deg) translateY(-30px); }
+        .flower.level-4 .petal:nth-child(12) { animation-delay: 1.2s; transform: translate(-50%, -90%) rotate(330deg) translateY(-30px); }
+        .flower.level-4 .petal { display: block; }
+
+        .flower-center {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle, #fffacd, #f0e68c);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: center-bloom 1s ease-out 1s both;
+            box-shadow: 0 3px 10px rgba(240, 230, 140, 0.4);
+            z-index: 2;
+        }
+
+        .stem {
+            position: absolute;
+            width: 15px;
+            height: 150px;
+            background: linear-gradient(to bottom, #98fb98, #90ee90);
+            bottom: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 5px;
+            animation: stem-grow 1.5s ease-out 0.5s both;
+            box-shadow: 0 2px 8px rgba(152, 251, 152, 0.3);
+            z-index: 0;
+        }
+
+        .message {
+            font-size: 2em;
+            color: #8b5a8c;
+            margin-top: 20px;
+            margin-bottom: 25px;
+            opacity: 0;
+            animation: message-appear 1s ease-out 2.5s both;
+            font-weight: 600;
+        }
+
+        .sub-message {
+            font-size: 1.3em;
+            color: #6b4c6d;
+            opacity: 0;
+            animation: message-appear 1.2s ease-out 3s both;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* click de corazon*/
+        .click-heart {
+            position: absolute;
+            font-size: 28px; /* Tamaño del corazón */
+            color: #ff69b4; /* Color rosa intenso */
+            pointer-events: none; /* Ignorar eventos de mouse para no interferir con clics */
+            animation: float-and-fade 1.5s ease-out forwards; /* Animación */
+            z-index: 9999; /* Asegura que esté encima de todo */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2); /* Sutil sombra */
+        }
+
+        /* corazones animacion */
+        @keyframes float-and-fade {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -150%) scale(1.5); /* Sube y se hace más grande */
+                opacity: 0;
+            }
+        }
+
+
+        /* corazones (global) */
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+            z-index: 1; /* Para que esté detrás del contenido principal pero encima del fondo */
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 24px;
+            color: #ffd1dc; /* Color suave para los corazones flotantes */
+            animation: float-up 4s linear infinite;
+            opacity: 0;
+        }
+
+        /* Estilos para la barra de progreso fija */
+        .progress-bar-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: #8b5a8c;
+            border-radius: 0 0 4px 4px;
+            overflow: hidden;
+            z-index: 1001;
+            box-shadow: 0 2px 10px rgba(139, 90, 140, 0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffc0cb, #e0b0ff);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* controles aestetics */
+        .music-controls-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            box-shadow: 0 -5px 20px rgba(200, 150, 200, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-top: 1px solid rgba(255, 192, 203, 0.3);
+            z-index: 1000;
+        }
+
+        .music-controls-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            gap: 15px;
+        }
+
+        .music-controls-bar button {
+            background: linear-gradient(45deg, #ffd1dc, #e6e6fa);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Kalam', cursive;
+            color: #6b4c6d;
+            font-weight: 500;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            min-width: 50px;
+        }
+
+        .music-controls-bar button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.3);
+            background: linear-gradient(45deg, #ffb6c1 0%, #dda0dd 100%);
+        }
+
+        .music-controls-bar button.active {
+            background: linear-gradient(45deg, #dda0dd 0%, #b19cd9 100%);
+            color: white;
+        }
+
+        .song-title {
+            color: #8b5a8c;
+            font-size: 1.1em;
+            font-weight: 600;
+            flex-grow: 1;
+            text-align: center;
+            margin: 0 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* barra de musica */
+        .music-progress-container {
+            width: 90%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .music-progress-bar {
+            flex-grow: 1;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .music-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffc0cb, #e0b0ff);
+            width: 0%;
+            border-radius: 4px;
+        }
+
+        .music-time {
+            font-size: 0.9em;
+            color: #6b4c6d;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bloom {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes petal-appear {
+            from { opacity: 0; transform: translate(-50%, -90%) scale(0); }
+            to { opacity: 1; }
+        }
+
+        @keyframes center-bloom {
+            from {
+                transform: translate(-50%, -50%) scale(0);
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        @keyframes stem-grow {
+            from {
+                height: 0;
+                bottom: 0;
+            }
+            to {
+                height: 150px;
+                bottom: -150px;
+            }
+        }
+
+        @keyframes gentle-sway {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(3deg); }
+            75% { transform: rotate(-3deg); }
+        }
+
+        @keyframes message-appear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 0;
+                transform: translateY(100px) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) rotate(360deg);
+            }
+            }
+
+        @keyframes gentle-pulse {
+            0%, 100% { transform: scale(1.05); }
+            50% { transform: scale(1.1); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                width: 95%;
+                margin-bottom: 140px;
+                padding-top: 60px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .introduction-message {
+                font-size: 0.95em;
+                padding: 10px 20px;
+            }
+
+            .flower {
+                width: 160px;
+                height: 160px;
+                margin-bottom: 5px;
+            }
+            .petal {
+                width: 50px;
+                height: 90px;
+                transform: translate(-50%, -90%);
+            }
+            /* Ajuste de petalos segun sea necesario */
+            .flower.level-0 .petal:nth-child(1) { transform: translate(-50%, -90%) rotate(0deg) translateY(-20px); }
+            .flower.level-0 .petal:nth-child(2) { transform: translate(-50%, -90%) rotate(72deg) translateY(-20px); }
+            .flower.level-0 .petal:nth-child(3) { transform: translate(-50%, -90%) rotate(144deg) translateY(-20px); }
+            .flower.level-0 .petal:nth-child(4) { transform: translate(-50%, -90%) rotate(216deg) translateY(-20px); }
+            .flower.level-0 .petal:nth-child(5) { transform: translate(-50%, -90%) rotate(288deg) translateY(-20px); }
+
+            .flower.level-1 .petal:nth-child(1) { transform: translate(-50%, -90%) rotate(0deg) translateY(-20px); }
+            .flower.level-1 .petal:nth-child(2) { transform: translate(-50%, -90%) rotate(60deg) translateY(-20px); }
+            .flower.level-1 .petal:nth-child(3) { transform: translate(-50%, -90%) rotate(120deg) translateY(-20px); }
+            .flower.level-1 .petal:nth-child(4) { transform: translate(-50%, -90%) rotate(180deg) translateY(-20px); }
+            .flower.level-1 .petal:nth-child(5) { transform: translate(-50%, -90%) rotate(240deg) translateY(-20px); }
+            .flower.level-1 .petal:nth-child(6) { transform: translate(-50%, -90%) rotate(300deg) translateY(-20px); }
+
+            .flower.level-2 .petal:nth-child(1) { transform: translate(-50%, -90%) rotate(0deg) translateY(-22px); }
+            .flower.level-2 .petal:nth-child(2) { transform: translate(-50%, -90%) rotate(40deg) translateY(-22px); }
+            .flower.level-2 .petal:nth-child(3) { transform: translate(-50%, -90%) rotate(80deg) translateY(-22px); }
+            .flower.level-2 .petal:nth-child(4) { transform: translate(-50%, -90%) rotate(120deg) translateY(-22px); }
+            .flower.level-2 .petal:nth-child(5) { transform: translate(-50%, -90%) rotate(160deg) translateY(-22px); }
+            .flower.level-2 .petal:nth-child(6) { transform: translate(-50%, -90%) rotate(200deg) translateY(-22px); }
+            .flower.level-2 .petal:nth-child(7) { transform: translate(-50%, -90%) rotate(240deg) translateY(-22px); }
+            .flower.level-2 .petal:nth-child(8) { transform: translate(-50%, -90%) rotate(280deg) translateY(-22px); }
+            .flower.level-2 .petal:nth-child(9) { transform: translate(-50%, -90%) rotate(320deg) translateY(-22px); }
+
+            .flower.level-3 .petal:nth-child(1) { animation-delay: 0.1s; transform: translate(-50%, -90%) rotate(0deg) translateY(-25px); }
+            .flower.level-3 .petal:nth-child(2) { animation-delay: 0.2s; transform: translate(-50%, -90%) rotate(36deg) translateY(-25px); }
+            .flower.level-3 .petal:nth-child(3) { animation-delay: 0.3s; transform: translate(-50%, -90%) rotate(72deg) translateY(-25px); }
+            .flower.level-3 .petal:nth-child(4) { animation-delay: 0.4s; transform: translate(-50%, -90%) rotate(108deg) translateY(-25px); }
+            .flower.level-3 .petal:nth-child(5) { animation-delay: 0.5s; transform: translate(-50%, -90%) rotate(144deg) translateY(-25px); }
+            .flower.level-3 .petal:nth-child(6) { animation-delay: 0.6s; transform: translate(-50%, -90%) rotate(180deg) translateY(-25px); }
+            .flower.level-3 .petal:nth-child(7) { animation-delay: 0.7s; transform: translate(-50%, -90%) rotate(216deg) translateY(-25px); }
+            .flower.level-3 .petal:nth-child(8) { animation-delay: 0.8s; transform: translate(-50%, -90%) rotate(252deg) translateY(-25px); }
+            .flower.level-3 .petal:nth-child(9) { animation-delay: 0.9s; transform: translate(-50%, -90%) rotate(288deg) translateY(-25px); }
+            .flower.level-3 .petal:nth-child(10) { animation-delay: 1.0s; transform: translate(-50%, -90%) rotate(324deg) translateY(-25px); }
+
+            .flower.level-4 .petal:nth-child(1) { animation-delay: 0.1s; transform: translate(-50%, -90%) rotate(0deg) translateY(-28px); }
+            .flower.level-4 .petal:nth-child(2) { animation-delay: 0.2s; transform: translate(-50%, -90%) rotate(30deg) translateY(-28px); }
+            .flower.level-4 .petal:nth-child(3) { animation-delay: 0.3s; transform: translate(-50%, -90%) rotate(60deg) translateY(-28px); }
+            .flower.level-4 .petal:nth-child(4) { animation-delay: 0.4s; transform: translate(-50%, -90%) rotate(90deg) translateY(-28px); }
+            .flower.level-4 .petal:nth-child(5) { animation-delay: 0.5s; transform: translate(-50%, -90%) rotate(120deg) translateY(-28px); }
+            .flower.level-4 .petal:nth-child(6) { animation-delay: 0.6s; transform: translate(-50%, -90%) rotate(150deg) translateY(-28px); }
+            .flower.level-4 .petal:nth-child(7) { animation-delay: 0.7s; transform: translate(-50%, -90%) rotate(180deg) translateY(-28px); }
+            .flower.level-4 .petal:nth-child(8) { animation-delay: 0.8s; transform: translate(-50%, -90%) rotate(210deg) translateY(-28px); }
+            .flower.level-4 .petal:nth-child(9) { animation-delay: 0.9s; transform: translate(-50%, -90%) rotate(240deg) translateY(-28px); }
+            .flower.level-4 .petal:nth-child(10) { animation-delay: 1.0s; transform: translate(-50%, -90%) rotate(270deg) translateY(-28px); }
+            .flower.level-4 .petal:nth-child(11) { animation-delay: 1.1s; transform: translate(-50%, -90%) rotate(300deg) translateY(-28px); }
+            .flower.level-4 .petal:nth-child(12) { animation-delay: 1.2s; transform: translate(-50%, -90%) rotate(330deg) translateY(-28px); }
+
+            .flower-center {
+                width: 50px;
+                height: 50px;
+            }
+            .stem {
+                width: 12px;
+                height: 120px;
+                bottom: -120px;
+            }
+
+            .message {
+                font-size: 1.6em;
+                margin-top: 15px;
+            }
+
+            .sub-message {
+                font-size: 1.1em;
+            }
+
+            .true-false {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tf-option {
+                min-width: 200px;
+            }
+
+            .music-controls-bar {
+                padding: 10px 15px;
+                gap: 8px;
+            }
+            .music-controls-top-row {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .song-title {
+                font-size: 0.9em;
+                width: 100%;
+                order: -1;
+                margin-bottom: 5px;
+            }
+            .music-progress-container {
+                width: 100%;
+                margin-top: 0px;
+                gap: 5px;
+            }
+            .music-time {
+                font-size: 0.8em;
+                min-width: 55px;
+            }
+
+            .progress-bar-fixed {
+                height: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar-fixed">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="container">
+        <div class="quiz-container" id="quiz">
+            <h1>Cuestionario para ti, mi corazón ❤️</h1>
+
+            <div class="introduction-message">
+                Mi amor, este pequeño cuestionario lo creé especialmente para ti, como un dulce reflejo de nuestros maravillosos 9 meses juntos. Cada detalle está puesto con el más inmenso cariño. Espero de corazón que cada pregunta te dibuje una sonrisa y que disfrutes plenamente la música que elegí pensando en nosotros. ¡Está hecho con todo mi amor para ti! 🥰
+            </div>
+
+            <div class="question">
+                <h3>1. ¿Qué pareja de Dragon Ball somos? 🐉💞</h3>
+                <img id="question-image-1" src="https://i.pinimg.com/736x/a7/82/12/a782127f6257b2b65b7baff8d915097c.jpg" alt="Imagen de Dragon Ball">
+                <div class="options">
+                    <button class="option" data-question="1" data-value="Bulma y Vegeta">Bulma y Vegeta</button>
+                    <button class="option" data-question="1" data-value="Milk y Goku">Milk y Goku</button>
+                    <button class="option" data-question="1" data-value="Videl y Gohan" data-correct="true">Videl y Gohan</button>
+                    <button class="option" data-question="1" data-value="N18 y Krilin">N18 y Krilin</button>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>2. ¿Cuál es mi comida favorita? 🍝🤤</h3>
+                <img id="question-image-2" src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/ac45ef69-d888-4908-9539-0d1e6a47a58a/dedlpzv-b3606b06-63d3-4d89-b567-71201812d44f.jpg/v1/fill/w_894,h_894,q_70,strp/kirby_comiendo_mole_by_calopoi_dedlpzv-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTI4MCIsInBhdGgiOiJcL2ZcL2FjNDVlZjY5LWQ4ODgtNDkwOC05NTM5LTBkMWU2YTQ3YTU4YVwvZGVkbHB6di1iMzYwNmIwNi02M2QzLTRkODktYjU2Ny03MTIwMTgxMmQ0NGYuanBnIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.NGKPE5NOHi5knB352LSwP_b9RXBVKfKWQ0ATJYwoaHo" alt="Imagen de comida">
+                <div class="options">
+                    <button class="option" data-question="2" data-value="Pizza">🍕 La pizza</button>
+                    <button class="option" data-question="2" data-value="Pasta" data-correct="true">🍝 La pasta</button>
+                    <button class="option" data-question="2" data-value="Frijoles">🍲 Los frijoles</button>
+                    <button class="option" data-question="2" data-value="Ensalada Roja">🥗 La ensalada roja</button>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>3. ¿Cuál es mi canción favorita? 🎶❤️</h3>
+                <img id="question-image-3" src="https://th.bing.com/th/id/OIP.XAbuJ6uPfLMku-ctDYbYCQHaEK?r=0&w=3840&h=2160&rs=1&pid=ImgDetMain&cb=idpwebpc1" alt="Imagen de música">
+                <textarea class="text-input" data-question="3" placeholder="Escribe el nombre de mi canción favorita..."></textarea>
+            </div>
+
+            <div class="question">
+                <h3>4. ¿Cuál es el personaje que me representa? 🎭🌟</h3>
+                <img id="question-image-4" src="https://i.pinimg.com/736x/32/21/fc/3221fcfe1e9a76837dcac934a66cde98.jpg" alt="Imagen de personaje">
+                <div class="options">
+                    <button class="option" data-question="4" data-value="Scott Pilgrim" data-correct="true">Scott Pilgrim</button>
+                    <button class="option" data-question="4" data-value="Shinji Ikari">Shinji Ikari</button>
+                    <button class="option" data-question="4" data-value="Peter Parker">Peter Parker</button>
+                    <button class="option" data-question="4" data-value="Kirigaya Kazuto">Kirigaya Kazuto</button>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>5. ¿Haría cualquier cosa por ti? 🥰💞</h3>
+                <img id="question-image-5" src="https://i.pinimg.com/474x/4f/2c/1d/4f2c1dc0424212c5dbc070246eb2f424.jpg" alt="Imagen de amor">
+                <div class="true-false">
+                    <button class="tf-option" data-question="5" data-value="true" data-correct="true">Sí, sin dudarlo</button>
+                    <button class="tf-option" data-question="5" data-value="false">No lo creo</button>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>6. ¿Qué te pedí para mi cumpleaños? 🎁🎂</h3>
+                <img id="question-image-6" src="https://i.pinimg.com/736x/fe/51/9a/fe519aa07b08209ffd080a2557b9923c.jpg" alt="Imagen de cumpleaños">
+                <textarea class="text-input" data-question="6" placeholder="Cuéntame, ¿qué desee para mi cumpleaños el año pasado?"></textarea>
+            </div>
+
+            <div class="question">
+                <h3>7. ¿Cuál es mi animal favorito? 🐾❤️</h3>
+                <img id="question-image-7" src="https://i.pinimg.com/474x/45/75/d9/4575d936f3feadc0f0c4f7851bda526b.jpg" alt="Imagen de animales">
+                <div class="options">
+                    <button class="option" data-question="7" data-value="Panda">🐼 Panda</button>
+                    <button class="option" data-question="7" data-value="Perro">🐶 Perro</button>
+                    <button class="option" data-question="7" data-value="Gato">🐱 Gato</button>
+                    <button class="option" data-question="7" data-value="Mapache" data-correct="true">🦝 Mapache</button>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>8. ¿Extraño jugar Flor.io contigo? 🎮🥺</h3>
+                <img id="question-image-8" src="https://i.pinimg.com/originals/a4/79/c6/a479c67f4c3adb3dccdc5d6395362bef.gif" alt="Imagen de juego">
+                <div class="true-false">
+                    <button class="tf-option" data-question="8" data-value="true" data-correct="true">¡Sí, muchísimo!</button>
+                    <button class="tf-option" data-question="8" data-value="false">Para nada</button>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>9. ¿Quién me dio o hizo el primer saco que te entregué hace 9 meses? 🧥🤔</h3>
+                <img id="question-image-9" src="https://i.pinimg.com/736x/38/a2/a3/38a2a36dec59b1b65bccf5f47c286cb4.jpg" alt="Imagen de saco">
+                <textarea class="text-input" data-question="9" placeholder="Escribe el nombre de esa persona especial..."></textarea>
+            </div>
+
+            <div class="question">
+                <h3>10. Si estuviera en un día lluvioso, ¿qué crees que me gustaría hacer? 🌧️💑</h3>
+                <img id="question-image-10" src="https://i.pinimg.com/originals/76/c0/a8/76c0a814cf966cc2c5093ed8064ac505.gif" alt="Imagen de día lluvioso">
+                <div class="options">
+                    <button class="option" data-question="10" data-value="Caminar bajo la lluvia">Salir a caminar bajo la lluvia</button>
+                    <button class="option" data-question="10" data-value="Contigo" data-correct="true">Hacer cualquier cosa, ¡pero que sea contigo!</button>
+                    <button class="option" data-question="10" data-value="Videojuegos">Jugar videojuegos</button>
+                    <button class="option" data-question="10" data-value="Leer">Leer un buen libro</button>
+                </div>
+            </div>
+
+            <button class="submit-btn" id="submitBtn" onclick="showResult()">
+                🌟 Descubrir mi flor mágica 🌟
+            </button>
+        </div>
+
+        <div class="result-container" id="result">
+            <div class="floating-hearts" id="hearts"></div> <div class="flower">
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="flower-center"></div>
+                <div class="stem"></div>
+            </div>
+
+            <div class="message" id="mainMessage">
+                ¡Eres un alma hermosa! 🌟
+            </div>
+            <div class="sub-message" id="subMessage">
+                Gracias por compartir tu esencia conmigo. Como esta flor que florece en tu honor, tu corazón irradia belleza y luz al mundo. Cada una de tus respuestas revela la persona maravillosa que eres.💖
+            </div>
+        </div>
+    </div>
+
+    <div class="music-controls-bar">
+        <div class="music-controls-top-row">
+            <button onclick="prevSong()">⏮️</button>
+            <button id="playPauseBtn" onclick="togglePlayPause()">▶️</button>
+            <button onclick="nextSong()">⏭️</button>
+            <div class="song-title" id="currentSongTitle">Cargando música...</div>
+            <button id="repeatBtn" onclick="toggleRepeatOne()">🔁</button>
+        </div>
+        <div class="music-progress-container">
+            <span class="music-time" id="currentTime">0:00</span>
+            <div class="music-progress-bar" id="musicProgressBar">
+                <div class="music-progress-fill" id="musicProgressFill"></div>
+            </div>
+            <span class="music-time" id="durationTime">0:00</span>
+        </div>
+    </div>
+
+    <div id="player" style="display: none;"></div>
+
+    <script src="http://www.youtube.com/iframe_api"></script>
+    <script>
+        let answers = {};
+        let totalQuestions = 10;
+        let player;
+        let repeatOne = false;
+        let updateTimer;
+
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.music-controls-bar')) {
+                // No mostrar corazones si se hace clic en la barra de música
+                return;
+            }
+            if (e.target.closest('.submit-btn') && Object.keys(answers).length < totalQuestions) {
+                // No mostrar corazones si se hace clic en el botón de enviar antes de completar todo
+                return;
+            }
+
+            const heart = document.createElement('div');
+            heart.className = 'click-heart';
+            heart.textContent = '💖'; 
+            heart.style.left = `${e.clientX}px`;
+            heart.style.top = `${e.clientY}px`;
+            document.body.appendChild(heart);
+
+            // Eliminar el corazón después de que termine la animación
+            heart.addEventListener('animationend', () => {
+                heart.remove();
+            });
+        });
+
+        document.querySelectorAll('.option, .tf-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const question = this.dataset.question;
+                const value = this.dataset.value;
+
+                document.querySelectorAll(`[data-question="${question}"]`).forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+
+                this.classList.add('selected');
+                // Para opciones múltiples y V/F
+                answers[question] = { value: value, correct: this.dataset.correct === 'true' };
+
+                updateProgress();
+                updateSubmitButton();
+            });
+        });
+
+        document.querySelectorAll('.text-input').forEach(input => {
+            input.addEventListener('input', function() {
+                const question = this.dataset.question;
+                const value = this.value.trim();
+
+                answers[question] = { value: value, correct: false };
+
+                if (value.length === 0) {
+                    delete answers[question];
+                }
+
+                updateProgress();
+                updateSubmitButton();
+            });
+        });
+
+        function updateProgress() {
+            const progress = (Object.keys(answers).length / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function updateSubmitButton() {
+            const submitBtn = document.getElementById('submitBtn');
+            if (Object.keys(answers).length === totalQuestions) {
+                submitBtn.classList.add('ready');
+            } else {
+                submitBtn.classList.remove('ready');
+            }
+        }
+
+        function showResult() {
+            if (Object.keys(answers).length < totalQuestions) {
+                alert('¡Ups! Parece que te falta responder algunas preguntas, amor. 💕 Por favor, complétalas todas antes de continuar.');
+                return;
+            }
+
+            document.getElementById('quiz').classList.add('hide');
+            document.getElementById('result').classList.add('show');
+
+            generatePersonalizedMessage();
+            createFloatingHearts(); 
+        }
+
+        function generatePersonalizedMessage() {
+            let correctCount = 0;
+
+            // Pregunta 1: Videl y Gohan
+            if (answers['1'] && answers['1'].value === 'Videl y Gohan') correctCount++;
+
+            // Pregunta 2: Pasta
+            if (answers['2'] && answers['2'].value === 'Pasta') correctCount++;
+
+            // Pregunta 3: Deadman Wonderland (variantes)
+            if (answers['3']) {
+                const songAnswer = answers['3'].value.toLowerCase();
+                if (songAnswer.includes('deadman wonderland') || songAnswer.includes('wonderland') || songAnswer.includes('deadman')) {
+                    correctCount++;
+                    answers['3'].correct = true; // Marcar como correcta internamente
+                }
+            }
+
+            // Pregunta 4: Scott Pilgrim
+            if (answers['4'] && answers['4'].value === 'Scott Pilgrim') correctCount++;
+
+            // Pregunta 5: Sí, sin dudarlo
+            if (answers['5'] && answers['5'].value === 'true') correctCount++;
+
+            // Pregunta 6: Una lista con tus gustos (variantes)
+            if (answers['6']) {
+                const giftAnswer = answers['6'].value.toLowerCase();
+                const keywords = ['lista', 'gustos', 'cosas que me gustan', 'cosas que te gustan', 'mis gustos', 'favoritas', 'lo que me gusta', 'deseos'];
+                if (keywords.some(keyword => giftAnswer.includes(keyword))) {
+                    correctCount++;
+                    answers['6'].correct = true;
+                }
+            }
+
+            // Pregunta 7: Mapache
+            if (answers['7'] && answers['7'].value === 'Mapache') correctCount++;
+
+            // Pregunta 8: ¡Sí, muchísimo!
+            if (answers['8'] && answers['8'].value === 'true') correctCount++;
+
+            // Pregunta 9: Tu madre (variantes)
+            if (answers['9']) {
+                const motherAnswer = answers['9'].value.toLowerCase();
+                const keywords = ['madre', 'mamá', 'mi madre', 'tu mamá', 'tu madre', 'ella'];
+                if (keywords.some(keyword => motherAnswer.includes(keyword))) {
+                    correctCount++;
+                    answers['9'].correct = true;
+                }
+            }
+
+            // Pregunta 10: Hacer cualquier cosa, ¡pero que sea contigo!
+            if (answers['10'] && answers['10'].value === 'Contigo') correctCount++;
+
+
+            const mainMessageEl = document.getElementById('mainMessage');
+            const subMessageEl = document.getElementById('subMessage');
+            const flowerEl = document.querySelector('.flower');
+
+            // Reiniciar clases de flor para evitar conflictos
+            flowerEl.classList.remove('level-0', 'level-1', 'level-2', 'level-3', 'level-4');
+
+            if (correctCount >= 9) { // 9-10 correctas
+                mainMessageEl.textContent = "¡Mi amor, eres simplemente increíble! 😍❤️‍🔥";
+                subMessageEl.textContent = "Este mensaje es diferente a los demás, pues representa que realmente me conoces, mi corazón. Quiero primeramente darte las gracias por estar aquí hoy, en un día tan especial, pues hace 9 meses te pedí que fueras mi novia. Fue una decisión que, aunque me llenaba de nervios, me arriesgué, y hoy soy el hombre más feliz que pueda existir, porque te tengo a ti a mi lado. Hemos pasado por muchísimas cosas estos 9 meses, y sé que tal vez sigamos pasando por más, pero quiero que sepas que, sin importar la situación, sin importar lo difícil que sea, soy feliz internamente porque conozco lo inmensamente afortunado que soy. ¡Eres la mejor novia que existe y no quiero a nadie más, pues a quien amo es a ti! No me importa el mundo, no me importan los demás; solo quiero quedarme a tu lado. Quiero poder formar un futuro contigo, realmente mi anhelo más grande es quedarme a tu lado, porque si no es contigo, no es con nadie. Aquí me quedaré para siempre, mi vida. Muchas gracias por todo, por responder este cuestionario, por estar aquí, por amarme, por estar para mí, por ser tú. Gracias por tanto. He intentado darte lo mejor de mí y lo seguiré haciendo, pues quiero que esto dure para toda la vida. ¡Felices 9 meses, espero que hayas disfrutado de todo esto! Yo, de verdad, lo disfruté desde hacer las preguntas, escoger la música de la playlist, hasta crear la página, ¡cosa que fue un reto hermoso! Te amo y recuerda: eres mi todo. Eres mi razón de ser, mi universo entero. ✨👑";
+                flowerEl.classList.add('level-4');
+            } else if (correctCount >= 7) { // 7-8 correctas
+                mainMessageEl.textContent = "¡¡¡:0 ¡INCREÍBLE! Me conoces RE BIEN, amoooor, jajajaj!!! 🤩💖";
+                subMessageEl.textContent = "¡Gracias por tanto, mi vida! Espero que hayas disfrutado esta experiencia. Me alegra muchísimo saber que la persona que tengo a mi lado me conoce así de bien, jajaja. Quiero que sepas que te amo con todo mi ser y que cada pequeña o gran cosa que te hago o te doy nace directamente de mi corazón, pues en mí solo existe el deseo de entregarte todo lo más bonito que pueda. ¡Me encantas! Soy tan feliz con nuestra relación, realmente nunca imaginé que tendría un vínculo tan hermoso y único. Para mí, tenerte a mi lado es algo mágico e indescriptible. Eres importantísima, especial y única… ¡simplemente eres mi todo! Te amo con todo mi ser. ¡Felices 9 meses, mi amor! 🥰✨";
+                flowerEl.classList.add('level-3');
+            } else if (correctCount >= 5) { // 5-6 correctas
+                mainMessageEl.textContent = "¡Uy, felicidades, mi amor! ¡Terminaste el cuestionario! 🎉💞";
+                subMessageEl.textContent = "Muchas gracias por hacerlo, mi cielo. Por lo que veo, me conoces súper bien. Gracias por intentar conocerme y por darme la oportunidad de conocerte a ti también. Te amo muchísimo, y realmente soy una persona muy afortunada de tenerte en mi vida. Espero de corazón que lo hayas disfrutado tanto como yo disfruté creándolo para ti. ¡Te amo mucho, mi niña hermosa! Realmente soy feliz a tu lado. ¡Felices 9 meses! 💐💖";
+                flowerEl.classList.add('level-2');
+            } else if (correctCount >= 3) { // 3-4 correctas
+                mainMessageEl.textContent = "¡Esooooo, qué bien, mi vida! ¡Gracias por terminar el cuestionario! 😊💕";
+                subMessageEl.textContent = "Lo hice con muchísimo esfuerzo para ti. Por lo que veo, me conoces, aunque creo que un día deberíamos salir a tomar un cafecito para conocernos aún más, ¿te parece? Espero que hayas disfrutado mucho de esta página, así como yo disfruté cada instante haciéndola para ti, jajaja. ¡Eres mi todo, recuérdalo siempre, ¿shi?! Te amo mucho, mi bella princesaaaaa. 🥰✨";
+                flowerEl.classList.add('level-1');
+            } else { // 0-2 correctas
+                mainMessageEl.textContent = "¡Qué lindo que llegaste hasta el final, mi amor! ¡Eso me alegra muchísimo! 😊";
+                subMessageEl.textContent = "Pero creo que deberíamos conocernos un poquito mejor, jajaja. ¡Gracias por intentarlo! Este cuestionario lo hice por nuestros 9 meses y simplemente por diversión, así que ¡tranquis! Te amo mucho sin importar el resultado, mi cielo. Eres lo más importante para mí. ❤️";
+                flowerEl.classList.add('level-0');
+            }
+        }
+
+        // Esta función crea los corazones y emojis flotantes para la sección de resultados
+        function createFloatingHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            const heartSymbols = ['💖', '💕', '💗', '💝', '🌸', '✨', '🦋', '🌟', '💜', '🌺'];
+
+            // Limpiar corazones existentes para evitar duplicados si se llama varias veces (aunque no debería ocurrir)
+            heartsContainer.innerHTML = ''; 
+
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                heart.style.bottom = '-20px'; // Asegura que comiencen desde abajo
+
+                heartsContainer.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 4000); // Coincide con la duración de la animación float-up
+            }, 800); // Genera un corazón cada 0.8 segundos
+        }
+
+        // --- Funciones del reproductor de YouTube ---
+
+        function onYouTubeIframeAPIReady() {
+            console.log('onYouTubeIframeAPIReady: API de YouTube cargada.');
+            player = new YT.Player('player', {
+                height: '0',
+                width: '0',
+                playerVars: {
+                    listType: 'playlist',
+                    list: 'PL4InQjr8vcCbyPPzgakNI5wz-RqQKczVE', // <--- ¡Tu playlist insertada aquí!
+                    autoplay: 1,
+                    controls: 0,
+                    disablekb: 1,
+                    iv_load_policy: 3
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+                    'onError': onPlayerError
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            console.log('onPlayerReady: Reproductor listo. Estado:', event.data);
+            player.setVolume(50);
+            updateMusicInfo();
+            startUpdateTimer();
+
+            event.target.playVideo().catch(error => {
+                console.warn("Autoplay bloqueado (onPlayerReady):", error);
+                document.getElementById('playPauseBtn').textContent = '▶️';
+                document.getElementById('currentSongTitle').textContent = 'Haz clic para iniciar la música ▶️';
+            });
+
+             setTimeout(() => {
+                if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                    console.log("onPlayerReady check: Autoplay no iniciado, mostrando mensaje de clic.");
+                    document.getElementById('playPauseBtn').textContent = '▶️';
+                    document.getElementById('currentSongTitle').textContent = 'Haz clic para iniciar la música ▶️';
+                }
+            }, 500);
+        }
+
+        function onPlayerStateChange(event) {
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const currentSongTitleEl = document.getElementById('currentSongTitle');
+            console.log('onPlayerStateChange: Estado actual:', event.data);
+
+            switch (event.data) {
+                case YT.PlayerState.PLAYING:
+                    updateMusicInfo();
+                    playPauseBtn.textContent = '⏸️';
+                    startUpdateTimer();
+                    console.log('Estado PLAYING: Actualizando UI y comenzando temporizador.');
+                    break;
+                case YT.PlayerState.PAUSED:
+                    playPauseBtn.textContent = '▶️';
+                    clearInterval(updateTimer);
+                    currentSongTitleEl.textContent = 'Música en pausa';
+                    console.log('Estado PAUSED: Actualizando UI y deteniendo temporizador.');
+                    break;
+                case YT.PlayerState.ENDED:
+                    playPauseBtn.textContent = '▶️';
+                    clearInterval(updateTimer);
+                    console.log('Estado ENDED: Canción terminada.');
+
+                    if (repeatOne) {
+                        console.log('Estado ENDED: Repitiendo la misma canción (Bucle ON). Intentando seek y play con retardo...');
+                        player.seekTo(0);
+                        setTimeout(() => {
+                            player.playVideo().then(() => {
+                                console.log('Bucle: player.playVideo() exitoso después de seek (con retardo).');
+                            }).catch(error => {
+                                console.warn('Bucle: Fallo al llamar player.playVideo() después de seek (con retardo):', error);
+                                document.getElementById('currentSongTitle').textContent = 'Error de bucle. Haz clic para reproducir.';
+                                document.getElementById('playPauseBtn').textContent = '▶️';
+                            });
+                        }, 100);
+                    } else {
+                        if (player.getPlaylistIndex() < player.getPlaylist().length - 1) {
+                            console.log('Estado ENDED: Pasando a la siguiente canción (Bucle OFF).');
+                            player.nextVideo();
+                        } else {
+                            console.log('Estado ENDED: Última canción de la playlist, deteniendo reproducción.');
+                            currentSongTitleEl.textContent = 'Playlist terminada';
+                        }
+                    }
+                    break;
+                case YT.PlayerState.BUFFERING:
+                    playPauseBtn.textContent = '▶️';
+                    currentSongTitleEl.textContent = 'Cargando...';
+                    clearInterval(updateTimer);
+                    console.log('Estado BUFFERING: Actualizando UI y deteniendo temporizador temporalmente.');
+                    break;
+                case YT.PlayerState.CUED:
+                    updateMusicInfo();
+                    playPauseBtn.textContent = '▶️';
+                    currentSongTitleEl.textContent = 'Listo para reproducir ▶️';
+                    clearInterval(updateTimer);
+                    console.log('Estado CUED: Listo para reproducir, esperando interacción.');
+                    break;
+                default:
+                    playPauseBtn.textContent = '▶️';
+                    currentSongTitleEl.textContent = 'Esperando interacción ▶️';
+                    clearInterval(updateTimer);
+                    console.log('Estado DESCONOCIDO/UNSTARTED: Restableciendo UI.');
+                    break;
+            }
+            updateProgressBar();
+        }
+
+        function onPlayerError(event) {
+            console.error('Error del reproductor de YouTube:', event.data);
+            let errorMessage = 'Error al cargar la música. Código: ' + event.data;
+            switch (event.data) {
+                case 2:
+                    errorMessage = 'ID de video/playlist inválido o contenido no permitido para incrustar.';
+                    break;
+                case 5:
+                    errorMessage = 'Error de HTML5. Posiblemente un problema con el navegador.';
+                    break;
+                case 100:
+                    errorMessage = 'Video no encontrado o privado/eliminado.';
+                    break;
+                case 101:
+                case 150:
+                    errorMessage = 'El propietario del video no permite la reproducción en reproductores incrustados.';
+                    break;
+            }
+            document.getElementById('currentSongTitle').textContent = 'Error: ' + errorMessage;
+            clearInterval(updateTimer);
+            document.getElementById('playPauseBtn').textContent = '⚠️';
+        }
+
+        function updateMusicInfo() {
+            if (player && typeof player.getVideoData === 'function' && typeof player.getDuration === 'function') {
+                const videoData = player.getVideoData();
+                const duration = player.getDuration();
+                document.getElementById('currentSongTitle').textContent = videoData.title || 'Música de fondo (título no disponible)';
+                console.log('updateMusicInfo: Título actual:', videoData.title, 'Duración:', formatTime(duration));
+            } else {
+                document.getElementById('currentSongTitle').textContent = 'Cargando...';
+                console.log('updateMusicInfo: Reproductor no listo para obtener título o duración.');
+            }
+        }
+
+        function togglePlayPause() {
+            if (!player) {
+                console.log('togglePlayPause: Reproductor no inicializado.');
+                return;
+            }
+
+            if (player.getPlayerState() === YT.PlayerState.ENDED) {
+                console.log('togglePlayPause: Reproductor en estado ENDED, buscando al inicio y reproduciendo.');
+                player.seekTo(0);
+                player.playVideo().catch(error => {
+                    console.warn("Play attempt after ENDED blocked (togglePlayPause):", error);
+                    document.getElementById('currentSongTitle').textContent = 'Haz clic para reproducir';
+                });
+                return;
+            }
+
+            if (player.getPlayerState() === YT.PlayerState.PLAYING || player.getPlayerState() === YT.PlayerState.BUFFERING) {
+                player.pauseVideo();
+                console.log('togglePlayPause: Pausando video.');
+            } else {
+                player.playVideo().catch(error => {
+                    console.warn("Play attempt blocked (togglePlayPause):", error);
+                    document.getElementById('currentSongTitle').textContent = 'Haz clic para reproducir';
+                });
+                console.log('togglePlayPause: Intentando reproducir video.');
+            }
+        }
+
+        function nextSong() {
+            if (!player) return;
+            console.log('nextSong: Saltando a la siguiente canción.');
+            if (repeatOne) {
+                repeatOne = false;
+                document.getElementById('repeatBtn').classList.remove('active');
+                document.getElementById('repeatBtn').textContent = '🔁';
+                console.log('nextSong: Bucle de una canción DESACTIVADO al saltar.');
+            }
+            player.nextVideo();
+        }
+
+        function prevSong() {
+            if (!player) return;
+            console.log('prevSong: Volviendo a la canción anterior.');
+            if (repeatOne) {
+                repeatOne = false;
+                document.getElementById('repeatBtn').classList.remove('active');
+                document.getElementById('repeatBtn').textContent = '🔁';
+                console.log('prevSong: Bucle de una canción DESACTIVADO al saltar.');
+            }
+            player.previousVideo();
+        }
+
+        function toggleRepeatOne() {
+            repeatOne = !repeatOne;
+            const repeatBtn = document.getElementById('repeatBtn');
+            if (repeatOne) {
+                repeatBtn.classList.add('active');
+                repeatBtn.textContent = '🔂';
+                console.log("toggleRepeatOne: Repeat one: ACTIVADO");
+                if (player && player.getPlayerState() === YT.PlayerState.ENDED) {
+                    player.seekTo(0);
+                    player.playVideo().catch(error => {
+                        console.warn("toggleRepeatOne: Play attempt after ENDED (manual toggle) blocked:", error);
+                    });
+                }
+            } else {
+                repeatBtn.classList.remove('active');
+                repeatBtn.textContent = '🔁';
+                console.log("toggleRepeatOne: Repeat one: DESACTIVADO");
+            }
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds) || seconds < 0) return "0:00";
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+        }
+
+        function updateProgressBar() {
+            if (player && typeof player.getCurrentTime === 'function' && typeof player.getDuration === 'function') {
+                const currentTime = player.getCurrentTime();
+                const duration = player.getDuration();
+                const progressPercent = (duration > 0) ? (currentTime / duration) * 100 : 0;
+
+                document.getElementById('musicProgressFill').style.width = progressPercent + '%';
+                document.getElementById('currentTime').textContent = formatTime(currentTime);
+                document.getElementById('durationTime').textContent = formatTime(duration);
+            }
+        }
+
+        function startUpdateTimer() {
+            clearInterval(updateTimer);
+            updateTimer = setInterval(updateProgressBar, 250);
+        }
+
+        document.getElementById('musicProgressBar').addEventListener('click', function(e) {
+            if (!player || typeof player.getDuration !== 'function') {
+                console.log('musicProgressBar click: Reproductor no listo para seek.');
+                return;
+            }
+
+            const progressBar = this;
+            const rect = progressBar.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const width = progressBar.offsetWidth;
+            const duration = player.getDuration();
+
+            if (duration === 0) {
+                console.log('musicProgressBar click: Duración de la canción es 0, no se puede buscar.');
+                return;
+            }
+
+            const seekTime = (clickX / width) * duration;
+            console.log(`musicProgressBar click: Buscando a ${formatTime(seekTime)} (${seekTime}s)`);
+            player.seekTo(seekTime, true);
+
+            if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                player.playVideo().catch(error => {
+                    console.warn("Seek and play attempt blocked:", error);
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.8s ease-in';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
