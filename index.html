@@ -932,10 +932,9 @@
     <div class="music-controls-bar">
         <div class="music-controls-top-row">
             <button onclick="prevSong()">⏮️</button>
-            <button id="playPauseBtn" onclick="togglePlayPause()">▶️</button>
+            <button id="playPauseBtn" onclick="togglePlayPause()" disabled>▶️</button>
             <button onclick="nextSong()">⏭️</button>
-            <div class="song-title" id="currentSongTitle">Cargando música...</div>
-            <button id="repeatBtn" onclick="toggleRepeatOne()">🔁</button>
+            <div class="song-title" id="currentSongTitle">Haz clic en ▶️ para iniciar la música</div>
         </div>
         <div class="music-progress-container">
             <span class="music-time" id="currentTime">0:00</span>
@@ -948,13 +947,14 @@
 
     <div id="player" style="display: none;"></div>
 
-    <script src="http://www.youtube.com/iframe_api"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let answers = {};
         let totalQuestions = 10;
         let player;
         let repeatOne = false;
         let updateTimer;
+        let playerReady = false;
 
         document.addEventListener('click', function(e) {
             if (e.target.closest('.music-controls-bar')) {
@@ -1173,23 +1173,12 @@
 
         function onPlayerReady(event) {
             console.log('onPlayerReady: Reproductor listo. Estado:', event.data);
+            playerReady = true;
             player.setVolume(50);
             updateMusicInfo();
             startUpdateTimer();
-
-            event.target.playVideo().catch(error => {
-                console.warn("Autoplay bloqueado (onPlayerReady):", error);
-                document.getElementById('playPauseBtn').textContent = '▶️';
-                document.getElementById('currentSongTitle').textContent = 'Haz clic para iniciar la música ▶️';
-            });
-
-             setTimeout(() => {
-                if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
-                    console.log("onPlayerReady check: Autoplay no iniciado, mostrando mensaje de clic.");
-                    document.getElementById('playPauseBtn').textContent = '▶️';
-                    document.getElementById('currentSongTitle').textContent = 'Haz clic para iniciar la música ▶️';
-                }
-            }, 500);
+            document.getElementById('playPauseBtn').disabled = false;
+            document.getElementById('currentSongTitle').textContent = 'Música lista para reproducir';
         }
 
         function onPlayerStateChange(event) {
@@ -1296,30 +1285,24 @@
         }
 
         function togglePlayPause() {
-            if (!player) {
-                console.log('togglePlayPause: Reproductor no inicializado.');
-                return;
-            }
-
-            if (player.getPlayerState() === YT.PlayerState.ENDED) {
-                console.log('togglePlayPause: Reproductor en estado ENDED, buscando al inicio y reproduciendo.');
-                player.seekTo(0);
-                player.playVideo().catch(error => {
-                    console.warn("Play attempt after ENDED blocked (togglePlayPause):", error);
-                    document.getElementById('currentSongTitle').textContent = 'Haz clic para reproducir';
-                });
+            if (!player || !playerReady) {
+                console.log('togglePlayPause: Reproductor no inicializado o no listo.');
                 return;
             }
 
             if (player.getPlayerState() === YT.PlayerState.PLAYING || player.getPlayerState() === YT.PlayerState.BUFFERING) {
                 player.pauseVideo();
                 console.log('togglePlayPause: Pausando video.');
+                document.getElementById('playPauseBtn').textContent = '▶️';
+                document.getElementById('currentSongTitle').textContent = 'Música en pausa';
             } else {
                 player.playVideo().catch(error => {
                     console.warn("Play attempt blocked (togglePlayPause):", error);
                     document.getElementById('currentSongTitle').textContent = 'Haz clic para reproducir';
                 });
                 console.log('togglePlayPause: Intentando reproducir video.');
+                document.getElementById('playPauseBtn').textContent = '⏸️';
+                document.getElementById('currentSongTitle').textContent = 'Reproduciendo música';
             }
         }
 
