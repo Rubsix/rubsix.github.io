@@ -806,421 +806,327 @@
     <div id="player" style="display: none;"></div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
-    <script>
-        let answers = {};
-        let totalQuestions = 10;
-        let player;
-        let repeatOne = false; // Estado del bucle de una canción
-        let updateTimer; // Para el temporizador de la barra de progreso
+<script>
+    var player;
+    var currentQuestion = 0;
+    const questions = document.querySelectorAll('.question-container');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const quizContent = document.getElementById('quiz-content');
+    const resultDiv = document.getElementById('result');
+    const resultDetailsDiv = document.getElementById('result-details');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const prevSongBtn = document.getElementById('prevSongBtn');
+    const nextSongBtn = document.getElementById('nextSongBtn');
+    const volumeSlider = document.getElementById('volume-slider');
+    const musicProgressBar = document.getElementById('music-progress-bar');
+    const musicProgress = document.getElementById('music-progress');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationTimeEl = document.getElementById('duration-time');
+    const togglePlaylistBtn = document.getElementById('toggle-playlist-btn');
+    const playlistInfoDiv = document.getElementById('playlist-info');
 
-        // --- Funciones para el cuestionario ---
+    // --- Nuevas variables y referencias de elementos ---
+    const welcomeScreen = document.getElementById('welcome-screen');
+    const startButton = document.getElementById('startButton');
+    const quizContainer = document.getElementById('quiz-container');
+    let hasInteracted = false; // Bandera para controlar la interacción del usuario
+    let playerIsReady = false; // Nueva bandera para saber si el reproductor está completamente listo
+    // --- Fin de nuevas variables ---
 
-        document.querySelectorAll('.option, .tf-option').forEach(option => {
-            option.addEventListener('click', function() {
-                const question = this.dataset.question;
-                const value = this.dataset.value;
-                const isCorrect = this.dataset.correct === 'true';
+    // Modificación del DOMContentLoaded para manejar la pantalla de bienvenida
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOMContentLoaded: Página cargada.");
+        quizContainer.style.display = 'none'; // Oculta el quiz al inicio
+        welcomeScreen.style.display = 'block'; // Muestra la pantalla de bienvenida
+        document.body.style.opacity = '0';
+        setTimeout(() => {
+            document.body.style.transition = 'opacity 0.8s ease-in';
+            document.body.style.opacity = '1';
+        }, 100);
+    });
 
-                document.querySelectorAll(`[data-question="${question}"]`).forEach(opt => {
-                    opt.classList.remove('selected');
-                });
+    // Event listener para el botón de inicio de la pantalla de bienvenida
+    startButton.addEventListener('click', function() {
+        console.log("startButton click: Botón 'Comenzar' clicado.");
+        if (!hasInteracted) {
+            welcomeScreen.style.display = 'none'; // Oculta la pantalla de bienvenida
+            quizContainer.style.display = 'block'; // Muestra el cuestionario
+            hasInteracted = true; // Marca que ya hubo interacción
 
-                this.classList.add('selected');
-                answers[question] = { value: value, correct: isCorrect };
-
-                updateProgress();
-                updateSubmitButton();
-            });
-        });
-
-        document.querySelectorAll('.text-input').forEach(input => {
-            input.addEventListener('input', function() {
-                const question = this.dataset.question;
-                const value = this.value.trim();
-
-                answers[question] = { value: value, correct: false };
-
-                if (value.length === 0) {
-                    delete answers[question];
-                }
-
-                updateProgress();
-                updateSubmitButton();
-            });
-        });
-
-        function updateProgress() {
-            const progress = (Object.keys(answers).length / totalQuestions) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-        }
-
-        function updateSubmitButton() {
-            const submitBtn = document.getElementById('submitBtn');
-            if (Object.keys(answers).length === totalQuestions) {
-                submitBtn.classList.add('ready');
-            } else {
-                submitBtn.classList.remove('ready');
-            }
-        }
-
-        function showResult() {
-            if (Object.keys(answers).length < totalQuestions) {
-                alert('Por favor, responde todas las preguntas antes de continuar. 🌸');
-                return;
-            }
-
-            document.getElementById('quiz').classList.add('hide');
-            document.getElementById('result').classList.add('show');
-
-            generatePersonalizedMessage();
-            createFloatingHearts();
-        }
-
-        function generatePersonalizedMessage() {
-            let correctCount = 0;
-            for (const questionId in answers) {
-                if (answers.hasOwnProperty(questionId) && answers[questionId].correct === true) {
-                    correctCount++;
-                }
-            }
-
-            const mainMessageEl = document.getElementById('mainMessage');
-            const subMessageEl = document.getElementById('subMessage');
-
-            if (correctCount >= 5) {
-                mainMessageEl.textContent = "¡Alma brillante, llena de luz! ✨";
-                subMessageEl.textContent = "Tu esencia resplandece con una claridad asombrosa. Has demostrado una profunda armonía con el mundo que te rodea. Sigue brillando y compartiendo tu hermosa energía.";
-            } else if (correctCount >= 3) {
-                mainMessageEl.textContent = "¡Corazón vibrante y lleno de magia! 💖";
-                subMessageEl.textContent = "Posees una sensibilidad especial que te conecta con la belleza de la vida. Tu camino está lleno de descubrimientos y alegría. Abraza cada momento de tu florecimiento.";
-            } else {
-                mainMessageEl.textContent = "¡Un espíritu en camino a florecer! 🌸";
-                subMessageEl.textContent = "Cada paso en tu vida es una oportunidad para crecer y aprender. Tu singularidad es un regalo, y con cada experiencia, te acercas más a tu versión más plena y hermosa.";
-            }
-        }
-
-        function createFloatingHearts() {
-            const heartsContainer = document.getElementById('hearts');
-            const heartSymbols = ['💖', '💕', '💗', '💝', '🌸', '✨', '🦋', '🌟', '💜', '🌺'];
-
-            setInterval(() => {
-                const heart = document.createElement('div');
-                heart.className = 'heart';
-                heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
-                heart.style.left = Math.random() * 100 + '%';
-                heart.style.animationDelay = Math.random() * 2 + 's';
-
-                heartsContainer.appendChild(heart);
-
-                setTimeout(() => {
-                    heart.remove();
-                }, 4000);
-            }, 800);
-        }
-
-        // --- Funciones del reproductor de YouTube ---
-
-        // La función onYouTubeIframeAPIReady es llamada automáticamente por la API de YouTube
-        function onYouTubeIframeAPIReady() {
-            console.log('onYouTubeIframeAPIReady: API de YouTube cargada.');
-            player = new YT.Player('player', {
-                height: '0',
-                width: '0',
-                playerVars: {
-                    listType: 'playlist',
-                    list: 'PLhwcfFjZh5sg2kjcxek8lzFZ5ud9xaw9K', // <--- ¡Tu playlist insertada aquí!
-                    autoplay: 1, // Intentar autoplay
-                    controls: 0,
-                    disablekb: 1,
-                    iv_load_policy: 3
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange,
-                    'onError': onPlayerError
-                }
-            });
-        }
-
-        function onPlayerReady(event) {
-            console.log('onPlayerReady: Reproductor listo. Estado:', event.data);
-            player.setVolume(50);
-            updateMusicInfo(); // Obtener el título inicial
-            startUpdateTimer(); // Iniciar el temporizador para la barra de progreso
-
-            // Intentar reproducir. El navegador puede bloquearlo si no ha habido interacción.
-            event.target.playVideo().catch(error => {
-                console.warn("Autoplay bloqueado (onPlayerReady):", error);
-                document.getElementById('playPauseBtn').textContent = '▶️';
-                document.getElementById('currentSongTitle').textContent = 'Haz clic para iniciar la música ▶️';
-            });
-
-             // Pequeño chequeo después de un corto tiempo para ver si el autoplay funcionó
-             setTimeout(() => {
-                if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
-                    console.log("onPlayerReady check: Autoplay no iniciado, mostrando mensaje de clic.");
-                    document.getElementById('playPauseBtn').textContent = '▶️';
-                    document.getElementById('currentSongTitle').textContent = 'Haz clic para iniciar la música ▶️';
-                }
-            }, 500); // 500ms después de onPlayerReady
-        }
-
-        function onPlayerStateChange(event) {
-            const playPauseBtn = document.getElementById('playPauseBtn');
-            const currentSongTitleEl = document.getElementById('currentSongTitle');
-            console.log('onPlayerStateChange: Estado actual:', event.data);
-
-            switch (event.data) {
-                case YT.PlayerState.PLAYING:
-                    updateMusicInfo();
-                    playPauseBtn.textContent = '⏸️'; // Icono de Pausa
-                    startUpdateTimer(); // Asegúrate de que el temporizador esté corriendo
-                    console.log('Estado PLAYING: Actualizando UI y comenzando temporizador.');
-                    break;
-                case YT.PlayerState.PAUSED:
-                    playPauseBtn.textContent = '▶️'; // Icono de Reproducir
-                    clearInterval(updateTimer); // Detener el temporizador cuando está en pausa
-                    currentSongTitleEl.textContent = 'Música en pausa';
-                    console.log('Estado PAUSED: Actualizando UI y deteniendo temporizador.');
-                    break;
-                case YT.PlayerState.ENDED:
-                    playPauseBtn.textContent = '▶️'; // Icono de Reproducir al final de una canción
-                    clearInterval(updateTimer); // Detener el temporizador
-                    console.log('Estado ENDED: Canción terminada.');
-
-                    if (repeatOne) {
-                        console.log('Estado ENDED: Repitiendo la misma canción (Bucle ON). Intentando seek y play con retardo...');
-                        player.seekTo(0); // Vuelve al inicio de la canción actual
-                        // Añadir un pequeño retardo antes de intentar reproducir
-                        setTimeout(() => {
-                            player.playVideo().then(() => {
-                                console.log('Bucle: player.playVideo() exitoso después de seek (con retardo).');
-                            }).catch(error => {
-                                console.warn('Bucle: Fallo al llamar player.playVideo() después de seek (con retardo):', error);
-                                document.getElementById('currentSongTitle').textContent = 'Error de bucle. Haz clic para reproducir.';
-                                document.getElementById('playPauseBtn').textContent = '▶️';
-                            });
-                        }, 100); // Pequeño retardo de 100 milisegundos.
-                    } else {
-                        // Si no es la última canción de la playlist, avanza
-                        if (player.getPlaylistIndex() < player.getPlaylist().length - 1) {
-                            console.log('Estado ENDED: Pasando a la siguiente canción (Bucle OFF).');
-                            player.nextVideo(); // Pasa a la siguiente canción en la playlist
-                        } else {
-                            // Si es la última canción y bucle no está activo, detiene y lo indica.
-                            console.log('Estado ENDED: Última canción de la playlist, deteniendo reproducción.');
-                            currentSongTitleEl.textContent = 'Playlist terminada';
-                            // Opcional: Reiniciar la playlist o hacer algo más
-                            // player.loadPlaylist({ list: 'PLhwcfFjZh5sg2kjcxek8lzFZ5ud9xaw9K', listType: 'playlist', index: 0 });
-                            // player.pauseVideo();
-                        }
+            // Intenta reproducir la música SOLO después de este clic
+            if (playerIsReady && player && typeof player.playVideo === 'function') {
+                console.log("startButton click: Reproductor listo, intentando playVideo().");
+                player.playVideo().then(() => {
+                    console.log("Música iniciada por interacción del usuario (promesa resuelta).");
+                    playPauseBtn.textContent = '⏸️'; // Actualiza el botón a pausa
+                }).catch(error => {
+                    // Este catch es CRÍTICO para ver por qué falla playVideo
+                    console.error("Error al intentar reproducir música con interacción:", error);
+                    let errorMessage = 'Música bloqueada. Toca ▶️ en la barra de abajo.';
+                    if (error.name === 'NotAllowedError') {
+                        errorMessage = 'El navegador bloqueó la reproducción automática con sonido. Toca ▶️.';
                     }
-                    break;
-                case YT.PlayerState.BUFFERING:
-                    playPauseBtn.textContent = '▶️'; // Mientras carga, mostrar play
-                    currentSongTitleEl.textContent = 'Cargando...';
-                    clearInterval(updateTimer);
-                    console.log('Estado BUFFERING: Actualizando UI y deteniendo temporizador temporalmente.');
-                    break;
-                case YT.PlayerState.CUED: // Cuando un video está cargado y listo para reproducirse
-                    updateMusicInfo(); // Asegurarse de tener el título correcto
-                    playPauseBtn.textContent = '▶️'; // Mostrar play, está listo para que el usuario inicie
-                    currentSongTitleEl.textContent = 'Listo para reproducir ▶️';
-                    clearInterval(updateTimer);
-                    console.log('Estado CUED: Listo para reproducir, esperando interacción.');
-                    break;
-                default:
-                    // Para otros estados (UNSTARTED), mostrar play y detener el temporizador.
-                    playPauseBtn.textContent = '▶️';
-                    currentSongTitleEl.textContent = 'Esperando interacción ▶️';
-                    clearInterval(updateTimer);
-                    console.log('Estado DESCONOCIDO/UNSTARTED: Restableciendo UI.');
-                    break;
-            }
-            updateProgressBar(); // Actualizar la barra inmediatamente después de un cambio de estado
-        }
-
-        // Manejador de errores para el reproductor de YouTube
-        function onPlayerError(event) {
-            console.error('Error del reproductor de YouTube:', event.data);
-            let errorMessage = 'Error al cargar la música. Código: ' + event.data;
-            switch (event.data) {
-                case 2:
-                    errorMessage = 'ID de video/playlist inválido o contenido no permitido para incrustar.';
-                    break;
-                case 5:
-                    errorMessage = 'Error de HTML5. Posiblemente un problema con el navegador.';
-                    break;
-                case 100:
-                    errorMessage = 'Video no encontrado o privado/eliminado.';
-                    break;
-                case 101:
-                case 150:
-                    errorMessage = 'El propietario del video no permite la reproducción en reproductores incrustados.';
-                    break;
-            }
-            document.getElementById('currentSongTitle').textContent = 'Error: ' + errorMessage;
-            clearInterval(updateTimer); // Detener el temporizador
-            document.getElementById('playPauseBtn').textContent = '⚠️'; // Mostrar un ícono de advertencia
-        }
-
-
-        function updateMusicInfo() {
-            if (player && typeof player.getVideoData === 'function' && typeof player.getDuration === 'function') {
-                const videoData = player.getVideoData();
-                const duration = player.getDuration();
-                document.getElementById('currentSongTitle').textContent = videoData.title || 'Música de fondo (título no disponible)';
-                console.log('updateMusicInfo: Título actual:', videoData.title, 'Duración:', formatTime(duration));
-            } else {
-                document.getElementById('currentSongTitle').textContent = 'Cargando...';
-                console.log('updateMusicInfo: Reproductor no listo para obtener título o duración.');
-            }
-        }
-
-        function togglePlayPause() {
-            if (!player) {
-                console.log('togglePlayPause: Reproductor no inicializado.');
-                return;
-            }
-
-            // Si el reproductor está en estado 'ended' (terminado), reinícialo al inicio de la canción actual
-            if (player.getPlayerState() === YT.PlayerState.ENDED) {
-                console.log('togglePlayPause: Reproductor en estado ENDED, buscando al inicio y reproduciendo.');
-                player.seekTo(0);
-                player.playVideo().catch(error => {
-                    console.warn("Play attempt after ENDED blocked (togglePlayPause):", error);
-                    document.getElementById('currentSongTitle').textContent = 'Haz clic para reproducir';
+                    document.getElementById('currentSongTitle').textContent = errorMessage;
                 });
-                return; // Ya hemos manejado este caso
-            }
-
-
-            if (player.getPlayerState() === YT.PlayerState.PLAYING || player.getPlayerState() === YT.PlayerState.BUFFERING) {
-                player.pauseVideo();
-                console.log('togglePlayPause: Pausando video.');
             } else {
-                // playVideo() devuelve una Promise, capturamos errores de autoplay aquí también
-                player.playVideo().catch(error => {
-                    console.warn("Play attempt blocked (togglePlayPause):", error);
-                    // Informar al usuario que necesita interactuar manualmente
-                    document.getElementById('currentSongTitle').textContent = 'Haz clic para reproducir';
-                });
-                console.log('togglePlayPause: Intentando reproducir video.');
+                console.warn("startButton click: Reproductor de YouTube no está listo aún cuando se hizo clic en 'Comenzar'.");
+                document.getElementById('currentSongTitle').textContent = 'Cargando reproductor... Toca ▶️ en la barra de abajo.';
+                // Si el reproductor no está listo, intentaremos reproducir una vez que esté listo (ver onPlayerReady)
             }
         }
+    });
 
-        function nextSong() {
-            if (!player) return;
-            console.log('nextSong: Saltando a la siguiente canción.');
-            if (repeatOne) { // Si el bucle estaba en una canción, lo desactiva al saltar
-                repeatOne = false;
-                document.getElementById('repeatBtn').classList.remove('active');
-                document.getElementById('repeatBtn').textContent = '🔁';
-                console.log('nextSong: Bucle de una canción DESACTIVADO al saltar.');
+
+    function onYouTubeIframeAPIReady() {
+        console.log("onYouTubeIframeAPIReady: API de YouTube cargada.");
+        player = new YT.Player('player', {
+            height: '0',
+            width: '0',
+            playerVars: {
+                listType: 'playlist',
+                list: 'RDGMEMQ1dJ7wXfLlqCjwV0xfSNbA',
+                autoplay: 0, // ¡Importante! Deshabilitar el autoplay inicial
+                loop: 1,
+                controls: 0
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
             }
-            player.nextVideo();
+        });
+    }
+
+    function onPlayerReady(event) {
+        console.log("onPlayerReady: Reproductor de YouTube COMPLETAMENTE listo.");
+        playerIsReady = true; // Marca que el reproductor está listo
+        player.setVolume(volumeSlider.value);
+        updateMusicInfo();
+
+        // Si el usuario ya hizo clic en "Comenzar" antes de que el reproductor estuviera listo,
+        // intentamos reproducir ahora.
+        if (hasInteracted) {
+            console.log("onPlayerReady: Usuario ya interactuó, intentando playVideo() ahora.");
+            player.playVideo().then(() => {
+                console.log("Música iniciada después de onPlayerReady (promesa resuelta).");
+                playPauseBtn.textContent = '⏸️';
+            }).catch(error => {
+                console.error("Error al intentar reproducir música después de onPlayerReady:", error);
+                let errorMessage = 'Música bloqueada. Toca ▶️ en la barra de abajo.';
+                if (error.name === 'NotAllowedError') {
+                    errorMessage = 'El navegador bloqueó la reproducción automática con sonido. Toca ▶️.';
+                }
+                document.getElementById('currentSongTitle').textContent = errorMessage;
+            });
+        }
+    }
+
+    function onPlayerStateChange(event) {
+        console.log("onPlayerStateChange: Estado del reproductor cambió a", event.data);
+        if (event.data === YT.PlayerState.PLAYING) {
+            playPauseBtn.textContent = '⏸️';
+            updateMusicInfo();
+        } else {
+            playPauseBtn.textContent = '▶️';
+        }
+        if (event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING) {
+            if (progressInterval) clearInterval(progressInterval);
+            progressInterval = setInterval(updateProgressBar, 1000);
+        } else {
+            clearInterval(progressInterval);
+        }
+    }
+
+    function togglePlayPause() {
+        console.log("togglePlayPause: Botón de Play/Pause clicado.");
+        if (!player) {
+            console.warn("togglePlayPause: Reproductor no inicializado.");
+            return;
         }
 
-        function prevSong() {
-            if (!player) return;
-            console.log('prevSong: Volviendo a la canción anterior.');
-            if (repeatOne) { // Si el bucle estaba en una canción, lo desactiva al saltar
-                repeatOne = false;
-                document.getElementById('repeatBtn').classList.remove('active');
-                document.getElementById('repeatBtn').textContent = '🔁';
-                console.log('prevSong: Bucle de una canción DESACTIVADO al saltar.');
-            }
+        if (player.getPlayerState() === YT.PlayerState.PLAYING || player.getPlayerState() === YT.PlayerState.BUFFERING) {
+            console.log("togglePlayPause: Pausando video.");
+            player.pauseVideo();
+        } else {
+            console.log("togglePlayPause: Intentando reproducir video.");
+            player.playVideo().then(() => {
+                console.log("togglePlayPause: playVideo() exitoso.");
+            }).catch(error => {
+                console.error("togglePlayPause: Fallo al llamar player.playVideo():", error);
+                document.getElementById('currentSongTitle').textContent = 'Error: Necesita interacción. Haz clic de nuevo.';
+            });
+        }
+    }
+
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    prevSongBtn.addEventListener('click', () => {
+        if (player) {
+            console.log("Botón Prev: Intentando ir a la canción anterior.");
             player.previousVideo();
         }
-
-        function toggleRepeatOne() {
-            repeatOne = !repeatOne;
-            const repeatBtn = document.getElementById('repeatBtn');
-            if (repeatOne) {
-                repeatBtn.classList.add('active');
-                repeatBtn.textContent = '🔂'; // Icono para repetir una canción
-                console.log("toggleRepeatOne: Repeat one: ACTIVADO");
-                // Si ya está reproduciéndose y terminó, la reinicia.
-                if (player && player.getPlayerState() === YT.PlayerState.ENDED) {
-                    player.seekTo(0);
-                    // Añadido catch aquí también por si el usuario activa el bucle estando ya terminada la canción
-                    player.playVideo().catch(error => {
-                        console.warn("toggleRepeatOne: Play attempt after ENDED (manual toggle) blocked:", error);
-                    });
-                }
-            } else {
-                repeatBtn.classList.remove('active');
-                repeatBtn.textContent = '🔁'; // Icono para repetir la playlist
-                console.log("toggleRepeatOne: Repeat one: DESACTIVADO");
-            }
+    });
+    nextSongBtn.addEventListener('click', () => {
+        if (player) {
+            console.log("Botón Next: Intentando ir a la siguiente canción.");
+            player.nextVideo();
         }
-
-        // --- Funciones para la barra de progreso de música ---
-
-        function formatTime(seconds) {
-            if (isNaN(seconds) || seconds < 0) return "0:00"; // Manejar valores no válidos
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = Math.floor(seconds % 60);
-            return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    });
+    volumeSlider.addEventListener('input', (e) => {
+        if (player) {
+            player.setVolume(e.target.value);
+            console.log("Volumen cambiado a:", e.target.value);
         }
+    });
 
-        function updateProgressBar() {
-            if (player && typeof player.getCurrentTime === 'function' && typeof player.getDuration === 'function') {
-                const currentTime = player.getCurrentTime();
-                const duration = player.getDuration();
-                const progressPercent = (duration > 0) ? (currentTime / duration) * 100 : 0; // Evitar división por cero
+    let progressInterval;
 
-                document.getElementById('musicProgressFill').style.width = progressPercent + '%';
-                document.getElementById('currentTime').textContent = formatTime(currentTime);
-                document.getElementById('durationTime').textContent = formatTime(duration);
-            }
-        }
-
-        function startUpdateTimer() {
-            // Limpiar cualquier temporizador existente para evitar múltiples ejecuciones
-            clearInterval(updateTimer);
-            // Actualizar cada 250ms para una barra de progreso más fluida
-            updateTimer = setInterval(updateProgressBar, 250);
-        }
-
-        // Click en la barra de progreso para hacer seek
-        document.getElementById('musicProgressBar').addEventListener('click', function(e) {
-            if (!player || typeof player.getDuration !== 'function') {
-                console.log('musicProgressBar click: Reproductor no listo para seek.');
-                return;
-            }
-
-            const progressBar = this;
-            const rect = progressBar.getBoundingClientRect(); // Obtener la posición y tamaño de la barra
-            const clickX = e.clientX - rect.left; // Posición X del clic relativa a la barra
-            const width = progressBar.offsetWidth; // Ancho total de la barra
+    function updateProgressBar() {
+        if (player && typeof player.getCurrentTime === 'function' && typeof player.getDuration === 'function') {
+            const currentTime = player.getCurrentTime();
             const duration = player.getDuration();
-
-            if (duration === 0) { // No se puede buscar si no hay duración
-                console.log('musicProgressBar click: Duración de la canción es 0, no se puede buscar.');
-                return;
+            if (duration > 0) {
+                const progress = (currentTime / duration) * 100;
+                musicProgress.style.width = progress + '%';
+                currentTimeEl.textContent = formatTime(currentTime);
+                durationTimeEl.textContent = formatTime(duration);
             }
+        }
+    }
 
-            const seekTime = (clickX / width) * duration;
-            console.log(`musicProgressBar click: Buscando a ${formatTime(seekTime)} (${seekTime}s)`);
-            player.seekTo(seekTime, true); // true para permitir saltos en el búfer
+    musicProgressBar.addEventListener('click', function(e) {
+        if (!player || typeof player.getDuration !== 'function') {
+            console.log('musicProgressBar click: Reproductor no listo para seek.');
+            return;
+        }
 
-            // Si estaba pausado, comenzar a reproducir
-            if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
-                player.playVideo().catch(error => {
-                    console.warn("Seek and play attempt blocked:", error);
-                });
-            }
+        const progressBar = this;
+        const rect = progressBar.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const width = progressBar.offsetWidth;
+        const duration = player.getDuration();
+
+        if (duration === 0) {
+            console.log('musicProgressBar click: Duración de la canción es 0, no se puede buscar.');
+            return;
+        }
+
+        const seekTime = (clickX / width) * duration;
+        console.log(`musicProgressBar click: Buscando a ${formatTime(seekTime)} (${seekTime}s)`);
+        player.seekTo(seekTime, true);
+
+        if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
+            player.playVideo().catch(error => {
+                console.warn("Seek and play attempt blocked:", error);
+            });
+        }
+    });
+
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    }
+
+    function updateMusicInfo() {
+        if (player && typeof player.getVideoData === 'function') {
+            const videoData = player.getVideoData();
+            document.getElementById('currentSongTitle').textContent = '🎵 ' + (videoData.title || 'Reproduciendo...');
+        } else {
+            document.getElementById('currentSongTitle').textContent = '🎵 Cargando música...';
+        }
+    }
+
+    togglePlaylistBtn.addEventListener('click', () => {
+        if (playlistInfoDiv.style.display === 'none' || playlistInfoDiv.style.display === '') {
+            playlistInfoDiv.style.display = 'block';
+        } else {
+            playlistInfoDiv.style.display = 'none';
+        }
+    });
+
+
+    // --- Lógica del Cuestionario (se mantiene sin cambios) ---
+    function showQuestion(index) {
+        questions.forEach((q, i) => {
+            q.style.display = i === index ? 'block' : 'none';
         });
+        prevBtn.style.display = index > 0 ? 'block' : 'none';
+        nextBtn.style.display = index < questions.length - 1 ? 'block' : 'none';
+        submitBtn.style.display = index === questions.length - 1 ? 'block' : 'none';
+    }
 
-        // Asegurar que la página se desvanece al cargar
-        document.addEventListener('DOMContentLoaded', function() {
-            document.body.style.opacity = '0';
-            setTimeout(() => {
-                document.body.style.transition = 'opacity 0.8s ease-in';
-                document.body.style.opacity = '1';
-            }, 100);
-        });
-    </script>
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            showQuestion(currentQuestion);
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            showQuestion(currentQuestion);
+        }
+    }
+
+    function calculateResult() {
+        let score = 0;
+        const q1Answer = document.querySelector('input[name="q1"]:checked')?.value;
+        const q2Answer = document.querySelector('input[name="q2"]:checked')?.value;
+        const q3Answer = document.querySelector('input[name="q3"]:checked')?.value;
+        const q4Answer = document.querySelector('input[name="q4"]:checked')?.value;
+        const q5Answer = document.querySelector('input[name="q5"]:checked')?.value;
+
+        if (q1Answer === 'd') score++;
+        if (q2Answer === 'b') score++;
+        if (q3Answer === 'b') score++;
+        if (q4Answer === 'c') score++;
+        if (q5Answer === 'a') score++;
+
+        let message = '';
+        let details = '';
+
+        if (score === 5) {
+            message = "¡Absolutamente perfecto! ¡Conoces mi corazón a la perfección! ❤️";
+            details = "Cada respuesta revela lo profundo y verdadero de nuestro amor. Eres mi alma gemela.";
+        } else if (score >= 3) {
+            message = "¡Muy bien! ¡Conoces bastante de nuestro amor! 😊";
+            details = "Hay algunas cosas que aún puedes descubrir, pero lo esencial está ahí. ¡Sigamos construyendo más recuerdos!";
+        } else {
+            message = "¡No te preocupes! ¡Nuestro amor es una aventura para seguir explorando! 😉";
+            details = "Cada día juntos es una oportunidad para conocernos más y crear nuevos momentos mágicos. Lo importante es que estamos juntos.";
+        }
+
+        resultDiv.textContent = message;
+        resultDetailsDiv.textContent = details;
+        resultDiv.style.display = 'block';
+        resultDetailsDiv.style.display = 'block';
+        quizContent.style.display = 'none';
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'none';
+    }
+
+    nextBtn.addEventListener('click', nextQuestion);
+    prevBtn.addEventListener('click', prevQuestion);
+    submitBtn.addEventListener('click', calculateResult);
+
+    // Función para los pétalos (se mantiene sin cambios)
+    document.addEventListener('mousemove', (e) => {
+        const body = document.body;
+        const petal = document.createElement('div');
+        petal.classList.add('love-flower');
+        petal.style.left = `${e.clientX - 25}px`;
+        petal.style.top = `${e.clientY - 25}px`;
+        petal.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        petal.style.opacity = `${Math.random() * 0.5 + 0.3}`;
+        body.appendChild(petal);
+
+        setTimeout(() => {
+            petal.remove();
+        }, parseFloat(petal.style.animationDuration) * 1000);
+    });
+</script>
 </body>
 </html>
